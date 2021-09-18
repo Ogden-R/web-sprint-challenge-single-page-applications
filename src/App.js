@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { Route, Link, Switch } from 'react-router-dom';
-
+import { Route, Switch } from 'react-router-dom';
+import Home from "./components/Header";
+import Pic from "./components/Pic";
+import Pizza from './components/Pizza';
 import PizzaForm from './components/PizzaForm';
+import Success from "./components/Success";
 
+import styled from 'styled-components';
 import schema from './validations/formSchema';
 import axios from 'axios';
 import * as yup from 'yup';
+
+
+const Container = styled.div`
+  * {
+    padding: 0px;
+    margin: 0px;
+    font-family: san-serif;
+    text-align: center;
+    color: dodgerblue;
+  }
+`;
+
 
 const initialFormValues = {
   name: '',
@@ -48,43 +64,49 @@ const initialOrder = []
 const initialDisabled = true
 
 export default function App(props) {
-
+  const [ url ] = useState('https://buff.ly/2UybmBQ');
   const [order, setOrder] = useState(initialOrder)
   const [formValues, setFormValues] = useState(initialFormValues)
   const [formErrors, setFormErrors] = useState(initialFormErrors)
   const [disabled, setDisabled] = useState(initialDisabled)
 
-  const getOrders = () => {
-    axios.get('https://reqres.in/')
-      .then(res => {
-        setOrder(res.data);
-      }).catch(err => console.error(err))
-  }
+
+
 
   const postNewOrder = newOrder => {
-    axios.post('https://reqres.in/', newOrder)
-      .then(res => {
-        setOrder([res.data, ...order])
+    axios
+      .post('https://reqres.in/api/orders', newOrder)
+      .then((res) => {
+        setOrder([...order, res.data,])
         setFormValues(initialFormValues);
+        console.log('Here is postNewOrder', postNewOrder)
       }).catch(err => {
+        debugger;
         console.error(err);
         setFormValues(initialFormValues)
       })
   }
-    const validate = (name, value) => {
-      yup.reach(schema, name)
-        .validate(value)
-        .then(() => setFormErrors({ ...formErrors, [name]: ''}))
-        .catch(err => setFormErrors({ ...formErrors, [name]:err.errors[0] }))
-    }
+
+  const validate = (name, value) => {
+    yup
+      .reach(schema, name)
+      .validate(value)
+      .then((valid) => {
+        setFormErrors(
+          {...formErrors,[name]: '',}
+        );
+      })
+      .catch((err) => {
+        setFormErrors(
+          { ...formErrors,[name]: err.errors[0]}
+        );
+      });
+  };
 
     const inputChange = (name, value) => {
       validate(name, value);
-      setFormValues({
-        ...formValues, 
-        [name]: value
-      })
-    }
+      setFormValues({ ...formValues, [name]: value });
+    };
 
     const formSubmit = () => {
       const newOrder = {
@@ -102,46 +124,49 @@ export default function App(props) {
       postNewOrder(newOrder);
     }
 
-    useEffect(() => {
-      getOrders()
-    }, [])
+    // useEffect(() => {
+    //   getOrders()
+    // }, [])
 
     useEffect(() => {
-      schema.isValid(formValues).then(valid => setDisabled(!valid))
+      schema.isValid(formValues).then((valid) => {
+        setDisabled(!valid)
+       });
     }, [formValues])
 
   return (
-    <div className='App'>
-      <nav>
-        <h1 className='store-header'>Lambda Eats</h1>
-        <div className='nav-links'>
-          <Link to="/">Home</Link>
-          <Link to="/pizza">Order Now</Link>
-        </div>
-      </nav>
-
+    <Container>
+      <Home
+        id="order-pizza"
+      />
       <Switch>
-        <Route path="/pizza">
-          <PizzaForm id="pizza-form"/>
+        <Route path="/pizza/success">
+          <Success
+            change={inputChange}
+            values={formValues}
+            submit={formSubmit}
+            orders={order}
+          />
         </Route>
-        <Route path="/"> Home 
+        {/* may need exact  */}
+        <Route path="/pizza">
+          <PizzaForm
+            values={formValues}
+            change={inputChange}
+            submit={formSubmit}
+            disabled={disabled}
+            errors={formErrors}
+          />
+        </Route>
+
+        <Route path="/">
+          <Pic pic={url} />
         </Route>
       </Switch>
-
-
-      <div className='home-wrapper'>
-            <img 
-                className='home-image'
-                src='Assets/Pizza.jpg'
-                alt='pizza'
-            />
-            <button
-                Link to="/pizza"
-                className='md-button order-button'
-            >Order Now
-            </button>
-        </div>
-    </div>
+      {order.map((user) => {
+        return <Pizza key={user.id} details={user} />;
+      })}
+    </Container>
   );
 }
 

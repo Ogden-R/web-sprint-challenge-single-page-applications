@@ -1,8 +1,16 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
+import '../App.css';
 
   
 export default function PizzaForm(props) {
-const { submit, values, change, disabled, errors } = props    
+    const { submit, values, change, disabled, errors } = props   
+
+    const history = useHistory();
+
+    const successRoute = () => {
+        history.push("/pizza/success");
+    }
     const onChange = (evt) => {
         const { name, value, checked, type } = evt.target
         const valueToUse = type === 'checkbox' ? checked : value;
@@ -10,28 +18,33 @@ const { submit, values, change, disabled, errors } = props
     }
 
     const onSubmit = (evt) => {
-        evt.preventDefault()
-        submit()
+        history.push('/pizza/success');
+        evt.preventDefault();
+        submit();
     }
 
     return (
-        <form  className='form-container'  onSubmit={onSubmit} >
-            <div className='form-group submit'>
-                <h2>Let's Order Some Pizza!</h2>
+        <form className="form container" id="pizza-form" onChange={onChange} onSubmit={onSubmit}>
+            <div className="form-group submit">
+                <h2>Add a Pizza</h2>
             </div>
             <div className='errors'>
                 <div>{errors.name}</div>
                 <div>{errors.email}</div>
                 <div>{errors.size}</div>
                 <div>{errors.sauce}</div>
+                <div>{errors.cheese}</div>
+                <div>{errors.crust}</div>
+                <div>{errors.special}</div>
             </div>
         <div className="personal-info">
             <h2>General Information</h2>
             <div className='form-group inputs'>
                 <label>Name:
-                    <input value={values.name} onChange={onChange} name='firstName'  type='text' />
+                    <input value={values.name} onChange={onChange} name='name'
+                    id='name-input'  
+                    type='text' />
                 </label>
-                <br/>
                 <label>Email:
                     <input value={values.email} onChange={onChange} name='email' type='text' />
                 </label>
@@ -39,7 +52,7 @@ const { submit, values, change, disabled, errors } = props
         </div>
         <div className="order-info">
             <div className='form-group inputs'>
-                <h4>What Kind of Pizza Would You Like?</h4>
+                <h2>Let's Build A Pizza! </h2>
                 <label>Size:
                     <select
                         onChange={onChange}  value={values.size} name='size' id='size-dropdown'
@@ -155,13 +168,13 @@ const { submit, values, change, disabled, errors } = props
                     <br/>
                 <label> Special Instructions:
                 <input
-                    value={values.special} onChange={onChange} name='special' type='text'
+                    value={values.special} onChange={onChange} name='special' type='textarea'
+                    id='special-text'
                 />
                 </label>
             </div>
         </div>
-            <button disabled={disabled}>Add to Order</button>
+        <button id="order-button" onClick={successRoute} disabled={disabled}>Place Order</button>
         </form>
     )
-
 }
