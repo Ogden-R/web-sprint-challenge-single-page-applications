@@ -56,9 +56,8 @@ const { submit, values, change, disabled, errors } = props
                 <select
                     onChange={onChange} value={values.sauce} name='sauce' id='sauce-dropdown'
                 >
-                    <option value=''>- Select a Sauce-</option>
+                    <option value='marinara'>- Marinara Sauce is the Default-</option>
                     <option value='none'>No Sauce</option>
-                    <option value='marinara'>Marinara</option>
                     <option value='bbq'>BBQ Sauce</option>
                     <option value='alfredo-parm'>Alfredo Parmesan</option>
                     <option value='ranch'>Ranch</option>
@@ -69,7 +68,7 @@ const { submit, values, change, disabled, errors } = props
                 <select
                     onChange={onChange} value={values.cheese}  name='cheese' id='cheese-dropdown'
                 >
-                    <option value='regular'>- Regular Amount of Cheese-</option>
+                    <option value='regular'>- Regular -</option>
                     <option value='none'>No Cheese</option>
                     <option value='light'>Light Cheese</option>
                     <option value='extra'>Extra Cheese` (+$1.50)`</option>

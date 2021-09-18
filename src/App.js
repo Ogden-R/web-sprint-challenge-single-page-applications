@@ -96,7 +96,8 @@ export default function App(props) {
         crust: formValues.crust.trim(),
         meats:['pepperoni', 'chicken', 'sausage', 'bacon', 'ham'].filter(meat => !!formValues[meat]),
         veggies:['spinach', 'tomatoes', 'onions', 'peppers', 'pineapple', 'mushrooms', 'olives'].filter(veggie => !!formValues[veggie]),
-        method: formValues.method.trim()
+        method: formValues.method.trim(),
+        special: formValues.special.trim()
       }
       postNewOrder(newOrder);
     }
